@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Real Movie Reviews — Cinematic</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#05060a;
+      --card:#071224;
+      --accent:#ff2d95;
+      --accent2:#8e49ff;
+      --muted:rgba(255,255,255,0.55);
+      --glass:rgba(255,255,255,0.03);
+      --glow:0 12px 40px rgba(142,73,255,0.12);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:#fff;background:linear-gradient(180deg,#020306 0%, #07111a 60%);overflow-y:auto;
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;padding:28px
+    }
+    .wrap{max-width:1200px;margin:0 auto}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .logo{display:flex;align-items:center;gap:12px}
+    .badge{width:60px;height:60px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;font-weight:800;box-shadow:var(--glow)}
+    h1{margin:0;font-size:20px;letter-spacing:0.5px}
+    p.tag{margin:0;color:var(--muted);font-size:13px}
+    .hero{margin-top:22px;display:grid;grid-template-columns:1fr 360px;gap:18px}
+    .hero-card{position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.04);background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));padding:22px}
+    .hero-poster{position:relative;border-radius:12px;overflow:hidden;height:360px;background:#000}
+    .hero-poster img{width:100%;height:100%;object-fit:cover;display:block;filter:contrast(1.05) saturate(1.05)}
+    .neon-title{position:absolute;left:22px;bottom:22px;font-size:26px;font-weight:800;text-shadow:0 2px 18px rgba(255,45,149,0.12),0 6px 30px rgba(142,73,255,0.06);}
+    .meta-strip{display:flex;gap:8px;align-items:center;margin-top:12px}
+    .pill{background:var(--glass);padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,0.03);font-weight:600;color:var(--muted)}
+    .cta{margin-top:14px;display:flex;gap:10px}
+    .btn{background:linear-gradient(90deg,var(--accent),var(--accent2));padding:10px 14px;border-radius:12px;border:0;color:white;font-weight:700;cursor:pointer;box-shadow:0 12px 30px rgba(142,73,255,0.08)}
+    .outline{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px 12px;border-radius:12px;color:var(--muted);cursor:pointer}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;margin:18px 0}
+    .search{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.02);padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+    .search input{background:transparent;border:0;outline:none;color:inherit}
+    .filters{display:flex;gap:8px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.03);transition:transform .18s ease, box-shadow .18s}
+    .card:hover{transform:translateY(-8px);box-shadow:0 22px 50px rgba(0,0,0,0.6)}
+    .poster{height:160px;border-radius:8px;overflow:hidden;background:#000}
+    .poster img{width:100%;height:100%;object-fit:cover;display:block}
+    .title{font-weight:800;margin-top:8px}
+    .sub{color:var(--muted);font-size:13px}
+    .rating{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+    .score{background:linear-gradient(90deg,#ffb86b,#ff2d95);padding:6px 9px;border-radius:10px;font-weight:800;color:#081029}
+    .modal-backdrop{position:fixed;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.6),rgba(0,0,0,0.85));display:grid;place-items:center;z-index:50}
+    .modal{width:100%;max-width:980px;border-radius:12px;background:linear-gradient(180deg,#081018,#06101a);border:1px solid rgba(255,255,255,0.03);overflow:hidden}
+    .modal-inner{display:grid;grid-template-columns:1fr 380px;gap:0}
+    .modal-video{background:#000;min-height:380px}
+    .modal-side{padding:18px}
+    .close-btn{background:transparent;border:0;color:var(--muted);font-weight:700;cursor:pointer}
+    footer{margin-top:28px;color:var(--muted);text-align:center}
+    @media (max-width:900px){
+      .hero{grid-template-columns:1fr}
+      .modal-inner{grid-template-columns:1fr}
+      .modal-side{order:2}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">
+        <div class="badge">RMR</div>
+        <div>
+          <h1>Real Movie Reviews</h1>
+          <p class="tag">Cinematic takes — trailers, breakdowns & ratings</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button class="outline" onclick="focusSearch()">Search</button>
+        <div style="color:var(--muted);font-weight:600">Top Picks</div>
+      </div>
+    </header>
+
+    <main class="hero">
+      <section class="hero-card">
+        <div class="hero-poster">
+          <img id="heroImg" src="https://image.tmdb.org/t/p/w1280/8ChCpCYxh9YXusmHwcE9YzP0TSG.jpg" alt="Featured">
+          <div class="neon-title">Blade Runner 2049 — A Lost Future</div>
+        </div>
+        <div class="meta-strip">
+          <div class="pill">Director: Denis Villeneuve</div>
+          <div class="pill">2017</div>
+          <div class="pill">Sci-Fi · Drama</div>
+        </div>
+        <p style="color:var(--muted);margin-top:12px;line-height:1.6">A visual feast that expands Ridley Scott's universe — thoughtful, slow-burning, and hauntingly beautiful. A must-watch for fans of contemplative sci-fi.</p>
+        <div class="cta">
+          <button class="btn" onclick="openModal(101)">Watch Trailer</button>
+          <button class="outline" onclick="scrollToList()">Browse Reviews</button>
+        </div>
+      </section>
+
+      <aside>
+        <div class="hero-card" style="padding:16px">
+          <div style="font-weight:800">Now Showing</div>
+          <div style="display:grid;gap:10px;margin-top:10px">
+            <div style="display:flex;gap:10px;align-items:center">
+              <img src="inception.jpg" style="width:56px;height:80px;border-radius:6px;object-fit:cover" alt="Inception">
+              <div>
+                <div style="font-weight:700">Inception</div>
+                <div class="sub">2010 · Nolan</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center">
+              <img src="https://image.tmdb.org/t/p/w92/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg" style="width:56px;height:80px;border-radius:6px;object-fit:cover" alt="Parasite">
+              <div>
+                <div style="font-weight:700">Parasite</div>
+                <div class="sub">2019 · Bong</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center">
+              <img src="https://image.tmdb.org/t/p/w92/qJ2tW6WMUDux911r6m7haRef0WH.jpg" style="width:56px;height:80px;border-radius:6px;object-fit:cover" alt="Dark Knight">
+              <div>
+                <div style="font-weight:700">The Dark Knight</div>
+                <div class="sub">2008 · Nolan</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-card" style="margin-top:12px;padding:14px;text-align:center;color:var(--muted)">
+          <div style="font-weight:800">Subscribe</div>
+          <div style="margin-top:8px">Get cinematic highlights and new reviews weekly.</div>
+          <div style="margin-top:8px"><input id="email" placeholder="Your email" style="width:100%;padding:10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:inherit"></div>
+          <div style="margin-top:10px"><button class="btn" onclick="subscribe()">Subscribe</button></div>
+        </div>
+      </aside>
+    </main>
+
+    <section style="margin-top:22px">
+      <div class="toolbar" id="listToolbar">
+        <div class="search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/><circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="1.6" opacity="0.9"/></svg>
+          <input id="search" placeholder="Search reviews, directors, genres...">
+        </div>
+        <div class="filters">
+          <select id="sort">
+            <option value="trending">Trending</option>
+            <option value="highest">Highest Rated</option>
+            <option value="latest">Latest</option>
+          </select>
+          <select id="genre">
+            <option value="all">All genres</option>
+            <option value="Sci-Fi">Sci-Fi</option>
+            <option value="Drama">Drama</option>
+            <option value="Action">Action</option>
+            <option value="Animation">Animation</option>
+            <option value="Crime">Crime</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <footer>
+      © <span id="year"></span> Real Movie Reviews — Cinematic Edition · Built for movie lovers
+    </footer>
+  </div>
+
+  <template id="modalTpl">
+    <div class="modal-backdrop" id="modalBackdrop">
+      <div class="modal">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.02)">
+          <div style="font-weight:800" id="modalTitle">Trailer</div>
+          <div><button class="close-btn" onclick="closeModal()">Close ✕</button></div>
+        </div>
+        <div class="modal-inner">
+          <div class="modal-video" id="modalVideo"></div>
+          <div class="modal-side">
+            <div id="modalMeta" style="color:var(--muted);margin-bottom:12px"></div>
+            <div id="modalDesc" style="line-height:1.6;color:var(--muted)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    const movies = [
+      {id:201, title:'Blade Runner 2049', year:2017, director:'Denis Villeneuve', rating:8.0, genres:['Sci-Fi','Drama'], poster:'https://image.tmdb.org/t/p/w500/8ChCpCYxh9YXusmHwcE9YzP0TSG.jpg', trailer:'https://www.youtube.com/embed/gCcx85zbxz4', excerpt:'A hypnotic, contemplative sequel that expands the mythos with staggering visuals and quiet power.'},
+      {id:202, title:'Inception', year:2010, director:'Christopher Nolan', rating:8.8, genres:['Sci-Fi','Thriller'], poster:'inception.jpg', trailer:'https://www.youtube.com/embed/YoHD9XEInc0', excerpt:'A high-concept heist in the dreamworld — thrilling, mind-bending, and emotionally resonant.'},
+      {id:203, title:'The Dark Knight', year:2008, director:'Christopher Nolan', rating:9.0, genres:['Action','Crime'], poster:'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg', trailer:'https://www.youtube.com/embed/EXeTwQWrcwY', excerpt:'A genre-defining blockbuster with one of cinema’s most iconic villains.'},
+      {id:204, title:'Parasite', year:2019, director:'Bong Joon-ho', rating:8.6, genres:['Drama','Thriller'], poster:'https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg', trailer:'https://www.youtube.com/embed/5xH0HfJHsaY', excerpt:'A razor-sharp social satire that surprises at every turn.'},
+      {id:205, title:'Spirited Away', year:2001, director:'Hayao Miyazaki', rating:8.6, genres:['Animation','Fantasy'], poster:'https://image.tmdb.org/t/p/w500/dL11DBPcRhWWnJcFXl9A07MrqTI.jpg', trailer:'https://www.youtube.com/embed/ByXuk9QqQkk', excerpt:'Magical and profound — Studio Ghibli’s masterpiece of wonder.'},
+      {id:206, title:'The Godfather', year:1972, director:'Francis Ford Coppola', rating:9.2, genres:['Crime','Drama'], poster:'https://image.tmdb.org/t/p/w500/rPdtLWNsZmAtoZl9PK7S2wE3qiS.jpg', trailer:'https://www.youtube.com/embed/sY1S34973zA', excerpt:'An operatic family saga that changed how stories about power are told.'},
+      {id:207, title:'Mad Max: Fury Road', year:2015, director:'George Miller', rating:8.1, genres:['Action','Sci-Fi'], poster:'https://image.tmdb.org/t/p/w500/8tZYtuWezp8JbcsvHYO0O46tFbo.jpg', trailer:'https://www.youtube.com/embed/hEJnMQG9ev8', excerpt:'Relentless, raw, and beautifully choreographed action from start to finish.'}
+    ];
+
+    const grid = document.getElementById('grid');
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    function stars(n){
+      const full = Math.round(n / 2); // 5-star scale
+      let out = '';
+      for(let i=0;i<5;i++){
+        out += i < full ? '★' : '☆';
+      }
+      return out;
+    }
+
+    function render(list){
+      grid.innerHTML='';
+      list.forEach(m=>{
+        const el = document.createElement('div');
+        el.className='card';
+        el.innerHTML = `
+          <div class="poster"><img src="${m.poster}" alt="${m.title} poster"></div>
+          <div class="title">${m.title}</div>
+          <div class="sub">${m.year} · ${m.director}</div>
+          <div class="sub">${m.genres.join(', ')}</div>
+          <div class="rating">
+            <div style="color:var(--muted)">${stars(m.rating)} <span style="margin-left:6px;font-weight:700">${m.rating.toFixed(1)}/10</span></div>
+            <div><button class="btn" onclick="openModal(${m.id})">Trailer</button></div>
+          </div>
+        `;
+        grid.appendChild(el);
+      });
+    }
+
+    render(movies);
+
+    const search = document.getElementById('search');
+    const sort = document.getElementById('sort');
+    const genre = document.getElementById('genre');
+
+    function apply(){
+      const q = search.value.trim().toLowerCase();
+      const g = genre.value;
+      let filtered = movies.filter(m => (m.title + ' ' + m.director + ' ' + m.genres.join(' ')).toLowerCase().includes(q));
+      if(g !== 'all') filtered = filtered.filter(m => m.genres.includes(g));
+      if(sort.value === 'highest') filtered.sort((a,b)=>b.rating-a.rating);
+      if(sort.value === 'latest') filtered.sort((a,b)=>b.year-a.year || b.rating - a.rating);
+      if(sort.value === 'trending') filtered.sort((a,b)=>b.rating - a.rating);
+      render(filtered);
+    }
+
+    search.addEventListener('input', apply);
+    sort.addEventListener('change', apply);
+    genre.addEventListener('change', apply);
+
+    function focusSearch(){ search.focus(); }
+    function scrollToList(){ document.getElementById('listToolbar').scrollIntoView({behavior:'smooth'}); }
+    function subscribe(){ const e=document.getElementById('email').value; alert(e? 'Subscribed — thanks!':'Enter an email'); }
+
+    function openModal(id){
+      const m = movies.find(x=>x.id===id);
+      const tpl = document.getElementById('modalTpl');
+      const node = tpl.content.cloneNode(true);
+      node.getElementById('modalTitle').textContent = `${m.title} — Trailer`;
+      node.getElementById('modalMeta').textContent = `${m.year} · ${m.director} · ${m.genres.join(', ')} · ${m.rating.toFixed(1)}/10`;
+      node.getElementById('modalDesc').textContent = m.excerpt;
+      const videoWrap = node.getElementById('modalVideo');
+      videoWrap.innerHTML = `<iframe width="100%" height="100%" src="${m.trailer}?autoplay=1&rel=0" title="${m.title} trailer" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+      node.getElementById('modalBackdrop').addEventListener('click',(e)=>{ if(e.target.id==='modalBackdrop') closeModal(); });
+      document.body.appendChild(node);
+      document.body.style.overflow='hidden';
+    }
+
+    function closeModal(){
+      const b = document.getElementById('modalBackdrop');
+      if(b) b.remove();
+      document.body.style.overflow='auto';
+    }
+
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+</body>
+</html>
